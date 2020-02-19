@@ -1,5 +1,4 @@
 class Stats:
-
     def __init__(self,match,not_match,ecru):
         self.match=match
         self.not_match=not_match

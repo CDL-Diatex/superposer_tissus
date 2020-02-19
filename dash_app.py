@@ -1,6 +1,4 @@
-import json
 from textwrap import dedent as d
-
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -47,5 +45,4 @@ def dash_scatter(fig,ecru,traite):
             encoded_image = base64.b64encode(open(image_filename, 'rb').read())
             return html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()))
         return "Cliquez sur les defauts sur le graph"
-
-    app.run_server(debug=True)
+    return app

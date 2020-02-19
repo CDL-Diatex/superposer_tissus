@@ -4,6 +4,8 @@ from draw_graph import Graph
 from copy import deepcopy
 from stats import Stats
 from dash_app import dash_scatter
+
+
 # ecru_name = "Matching/22/01 389901-22.csv"
 ecru_name = "Matching/26/output_step2_Chaine_26.csv"
 # ecru_name = "Matching/26/03 389901-26.csv"
@@ -32,10 +34,6 @@ params=Point_matcher.find_best_match(ecru,traite)
 # params=0,1.08,1
 print(params)
 
-origin = params[0]
-traite.move_origin(origin)
-traite.moveData(params[1],params[2])
-Graph.draw(ecru.data,traite.data,traite_name,rotation)
 
 ecru=deepcopy(ecru2)
 traite=deepcopy(traite2)
@@ -47,8 +45,10 @@ match=Point_matcher.find_corresponding_defect_list(ecru,traite,1)[0]
 no_match=Point_matcher.find_corresponding_defect_list(ecru,traite,1)[1]
 # Graph.draw(match[:,0,:],match[:,1,:])
 # Graph.draw(no_match)
-figure=Graph.draw(ecru.data,traite.data,traite_name,rotation)
-dash_scatter(figure,ecru,traite)
 stats=Stats(match,no_match,ecru)
 print(stats.staying_rates())
 print(stats.qualif_comparison())
+
+figure=Graph.draw(ecru.data,traite.data,traite_name,rotation)
+
+dash_scatter(figure,ecru,traite).run_server(debug=False)
