@@ -59,8 +59,11 @@ def render_stat(stats):
                27: "TI T-Chaine", 28: "TI T-TRAME", 29: "TI chaine", 3000: "inconnu"}
     rates = stats.staying_rates()
     stats_list=[]
-    # for defect_type in rates.keys():
-    #     stats_list.append(html.Li(defects[defect_type]+" : "+str(round(rates[defect_type][0]*100,2))+"% de "+str(rates[defect_type][1])))
+    for defect_type in rates.keys():
+        if defect_type in defects.keys():
+            stats_list.append(html.Li(defects[defect_type]+" : "+str(round(rates[defect_type][0]*100,2))+"% de "+str(rates[defect_type][1])))
+        else:
+            stats_list.append(html.Li(str(defect_type)+" : "+str(round(rates[defect_type][0]*100,2))+"% de "+str(rates[defect_type][1])))
     return html.Ul(stats_list)
 
 
