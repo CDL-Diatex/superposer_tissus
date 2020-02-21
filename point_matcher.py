@@ -20,7 +20,7 @@ class Point_matcher():
         for defect_e in ecru_defect:
             dist_min=np.inf
             for defect_t in traite_defect:
-                # if np.abs((defect_e[0] - defect_t[0])) < 3 * tol and np.abs((defect_e[1] - defect_t[1])) < 3* tol:
+                if np.abs((defect_e[0] - defect_t[0])) < 3 * tol and np.abs((defect_e[1] - defect_t[1])) < 3* tol:
                     dist=np.sqrt((defect_e[0]-defect_t[0])**2+(defect_e[1]-defect_t[1])**2)
                     if dist<dist_min:
                         dist_min=dist
@@ -101,7 +101,7 @@ class Point_matcher():
         return param
 
     @staticmethod
-    def find_all_params_rough(ecru, traite,origin_start=0,origin_end=150,start_long=1.05,finish_long=1.1,start_larg=1.05,finish_larg=1.1,step=0.01):
+    def find_all_params_rough(ecru, traite,origin_start=0,origin_end=150,start_long=1,finish_long=1.1,start_larg=1,finish_larg=1.1,step=0.01):
         best=0
         param=(0,0,0)
         for origin in tqdm(range(origin_start,origin_end,10)):
@@ -135,9 +135,13 @@ class Point_matcher():
 
     @staticmethod
     def find_best_match(ecru, traite):
-        param=Point_matcher.find_all_params_rough(ecru,traite)
+        ecru_centre=deepcopy(ecru)
+        ecru_centre.extract_center()
+        traite_centre=deepcopy(traite)
+        traite_centre.extract_center()
+        param=Point_matcher.find_all_params_rough(ecru_centre,traite_centre)
         print(param)
-        param=Point_matcher.find_all_params_fine(ecru,traite,param[0]-5,param[0]+5,param[1]-0.01,param[1]+0.01,param[2]-0.01,param[2]+0.01,0.001)
+        param=Point_matcher.find_all_params_fine(ecru_centre,traite_centre,param[0]-5,param[0]+5,param[1]-0.01,param[1]+0.01,param[2]-0.01,param[2]+0.01,0.001)
         return param
     @staticmethod
     def rotation_correlations(ecru,traite,position):

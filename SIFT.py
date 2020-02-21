@@ -97,7 +97,6 @@ class Tissus:
                  center.append(defect)
         self.data = np.array(center)
 
-
     def move_origin(self,origin_delta):
         for default in self.data:
             default[1]+=origin_delta

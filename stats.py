@@ -1,28 +1,40 @@
+from point_matcher import Point_matcher
+import math
+
 class Stats:
-    def __init__(self,match,not_match,ecru):
-        self.match=match
-        self.not_match=not_match
+    def __init__(self,ecru,traite):
+        self.match = Point_matcher.find_corresponding_defect_list(ecru, traite, 2)[0]
+        self.no_match = Point_matcher.find_corresponding_defect_list(ecru, traite, 2)[1]
         self.ecru=ecru
-        self.defect_categories=len(ecru.data[:,3])
+        self.traite=traite
+        if math.isnan(self.match[0,0,3]):#si les défauts d'écru ont été requalifés c'est le colonne 2 sinon la 3
+            self.defect_qualification_col = 2
+        else:
+            self.defect_qualification_col = 3
+        self.defect_categories=len(ecru.data[:,self.defect_qualification_col])
     def total_amount_defect(self,category):
         tot = 0
         for defect in self.ecru.data:
-            if defect[3]==category:
+            if defect[self.defect_qualification_col]==category:
                 tot+=1
         return tot
 
     def staying_rates(self):
         rates={}
-        for def_category in set(self.ecru.data[:,3]):
+        for def_category in set(self.ecru.data[:,self.defect_qualification_col]):
             rates[def_category]=[0,0]
             for defect_couple in self.match:
-                if defect_couple[0,3]==def_category: #on prend le type de défaut écru
+                if defect_couple[0,self.defect_qualification_col]==def_category: #on prend le type de défaut écru
                     rates[def_category][0]+=1
-                    rates[def_category][1]+=1
-            rates[def_category][0]=rates[def_category][0]/self.total_amount_defect(def_category)
+            rates[def_category][1]=self.total_amount_defect(def_category)
+            if self.total_amount_defect(def_category) != 0:
+                rates[def_category][0]=rates[def_category][0]/rates[def_category][1]
+            else:
+                print("no defect in category " + str(def_category))
+                rates[def_category][0]=0
         return rates
 
-    def qualif_comparison(self): #compares the qualif of the matching results
+    def qualif_comparison(self): #compares the qualif of the matching results. Ne marche que pour les défauts requalifiés
         corresp = {1: [13,24], 2: [26,28,15],3 :[29,27,15]}
         rates={}
         for def_category in corresp.keys():
