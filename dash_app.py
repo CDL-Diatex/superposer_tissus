@@ -45,7 +45,7 @@ def dash_scatter(fig,ecru,traite,stats):
         if clickData:
             x= clickData["points"][0]["x"]
             y=clickData["points"][0]["y"]
-            donnees=ecru.dataframe[ecru.dataframe["metrage"]==x]
+            donnees=ecru.dataframe.loc[(ecru.dataframe["metrage"]==x) & (ecru.dataframe["position"]==y)]
             id_image=donnees["image"].iloc[0]
             id_roule=donnees["roule"].iloc[0]
             image_filename = 'Matching/'+str(id_roule)+"/Images/"+"d_"+str(id_roule)+"_"+str(id_image)+"_0.jpg"

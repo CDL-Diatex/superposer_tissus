@@ -7,11 +7,12 @@ class Stats:
         self.no_match = Point_matcher.find_corresponding_defect_list(ecru, traite, 2)[1]
         self.ecru=ecru
         self.traite=traite
-        if math.isnan(self.match[0,0,3]):#si les défauts d'écru ont été requalifés c'est le colonne 2 sinon la 3
-            self.defect_qualification_col = 2
-        else:
-            self.defect_qualification_col = 3
-        self.defect_categories=len(ecru.data[:,self.defect_qualification_col])
+        if self.match.any():
+            if math.isnan(self.match[0,0,3]):#si les défauts d'écru ont été requalifés c'est la colonne 2 sinon la 3
+                self.defect_qualification_col = 2
+            else:
+                self.defect_qualification_col = 3
+            self.defect_categories=len(ecru.data[:,self.defect_qualification_col])
     def total_amount_defect(self,category):
         tot = 0
         for defect in self.ecru.data:
@@ -21,6 +22,8 @@ class Stats:
 
     def staying_rates(self):
         rates={}
+        if not self.match.any():
+            return rates
         for def_category in set(self.ecru.data[:,self.defect_qualification_col]):
             rates[def_category]=[0,0]
             for defect_couple in self.match:
