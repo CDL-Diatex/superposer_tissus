@@ -6,10 +6,13 @@ import plotly.graph_objects as go
 class Graph():
     @staticmethod
     def draw(data1, data2=[], name="inconnu", rotation="inconnu"):
-        defects = {1: "FOD", 2: "TRAME", 3: "CHAINE", 13: "FOD2", 15: "TI Noeud", 24: "FOD 2T", 26: "TI trame",
+        defects = {1: "FOD", 2: "TRAME", 3: "CHAINE", 4: "FOD1", 5: "FOD2", 6: "TRAME1", 7: "TRAME2", 8: "CHAINE1",
+                   9: "CHAINE2", 13: "FOD2", 15: "TI Noeud", 24: "FOD 2T", 26: "TI trame",
                    27: "TI T-Chaine", 28: "TI T-TRAME", 29: "TI chaine", 3000: "inconnu"}
-        data_1 = {1: [], 2: [], 3: [], 13: [], 15: [], 24: [], 26: [], 27: [], 28: [], 29: [], 3000: []}
-        data_2 = {1: [], 2: [], 3: [], 13: [], 15: [], 24: [], 26: [], 27: [], 28: [], 29: [], 3000: []}
+        data_1 = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 13: [], 15: [], 24: [], 26: [], 27: [],
+                  28: [], 29: [], 3000: []}
+        data_2 = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 13: [], 15: [], 24: [], 26: [], 27: [],
+                  28: [], 29: [], 3000: []}
 
         for e in data1:
             if not math.isnan(e[3]):  # si le défaut a été requalifié

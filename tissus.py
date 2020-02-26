@@ -15,9 +15,9 @@ class Tissus:
     def parseCsv(self, path):
         df = pd.read_csv(path, names=["roule", "id", "zero1", "termine", "long_tot", "larg_tot", "inconnu1", "zero2",
                                       "type_defaut", "inconnu3", "metrage", "position", "long_defaut", "larg_defaut",
-                                      "inconnu2", "image", "image2", "zero3", "requal_3_cat", "requal_6cat"])
-        df1 = df[['metrage', 'position', "type_defaut", "requal_3_cat", "image", "roule"]]
-        return df1.to_numpy(), df1
+                                      "inconnu2", "image", "image2", "zero3", "requal_3_cat", "requal_6_cat"])
+        df1 = df[['metrage', 'position', "type_defaut", "requal_6_cat", "image", "roule"]]
+        return df1.to_numpy(), df
 
     def moveData(self, long, larg):
         mid_l = self.long_tot / 2
@@ -36,20 +36,26 @@ class Tissus:
     def remove_duplicates(self):  # remplace tous les duplicata par un défaut à leur position moyenne
         kept = []
         defects = self.data.tolist()
-        for defect1 in defects:
-            avgx = defect1[0]
-            avgy = defect1[1]
+        while len(defects)>0:
+            avgx = defects[0][0]
+            avgy = defects[0][1]
             tot = 1
-            for defect2 in defects:
-                if np.abs((defect1[0] - defect2[0])) < 0.2 and np.abs(
-                        (defect1[1] - defect2[1])) < 25 and defect1 != defect2 and defect1[2] == defect2[2]:
-                    avgx += defect2[0]
-                    avgy += defect2[1]
+            i=0
+            while i<len(defects):
+                if np.abs((defects[0][0] - defects[i][0])) < 1 and np.abs(
+                        (defects[0][1] - defects[i][1])) < 25 and defects[0] != defects[i] and str(defects[0][3]) == str(defects[i][3]): #si les deux points sont proches et de meme catégorie. Le str permet de gérer le cas défaut non requalifié. La colonne 3 vaut alors nan et on ne s'interesse pas au type de défaut
+                    avgx += defects[i][0]
+                    avgy += defects[i][1]
                     tot += 1
-                    defects.remove(defect2)
-            defect1[0] = avgx / tot
-            defect1[1] = avgy / tot
-        self.data = np.array(defects)
+                    defects.remove(defects[i])
+                else:
+                    i += 1
+            new_defect=defects[0].copy()
+            new_defect[0] = avgx / tot
+            new_defect[1] = avgy / tot
+            kept.append(new_defect)
+            defects.pop(0)
+        self.data = np.array(kept)
 
     def rotate(self, rotation):
         if rotation == "no":

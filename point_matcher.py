@@ -37,10 +37,10 @@ class Point_matcher():
 
     @staticmethod
     def find_all_params_rough(ecru, traite, origin_start=0, origin_end=150, start_long=1, finish_long=1.1, start_larg=1,
-                              finish_larg=1.1, step=0.01):
+                              finish_larg=1.1, step=0.01,vert_step=10):
         best = 0
         param = (0, 0, 0)
-        for origin in tqdm(range(origin_start, origin_end, 10)):
+        for origin in tqdm(range(origin_start, origin_end, vert_step)):
             for delta_long in np.arange(start_long, finish_long, step):
                 for delta_larg in np.arange(start_larg, finish_larg, step):
                     traite_copy = deepcopy(traite)
@@ -54,10 +54,10 @@ class Point_matcher():
 
     @staticmethod
     def find_all_params_fine(ecru, traite, origin_start=0, origin_end=100, start_long=1.05, finish_long=1.1,
-                             start_larg=1.05, finish_larg=1.1, step=0.001):
+                             start_larg=1.05, finish_larg=1.1, step=0.001,vert_step=2):
         best = np.inf
         param = ((origin_start + origin_end)/2, (start_long + finish_long)/2, (start_larg + finish_larg)/2)
-        for origin in tqdm(range(origin_start, origin_end,2)):
+        for origin in tqdm(range(origin_start, origin_end,vert_step)):
             for delta_long in np.arange(start_long, finish_long, step):
                 for delta_larg in np.arange(start_larg, finish_larg, step):
                     traite_copy = deepcopy(traite)
@@ -71,41 +71,43 @@ class Point_matcher():
 
     @staticmethod
     def find_best_match(ecru, traite,vert_off,long_param,hauteur_param):
+        rough_horiz_step=0.01
+        rough_vert_step=10
+        fine_horiz_step=0.001
+        fine_vert_step=2
         ecru_centre = deepcopy(ecru)
         ecru_centre.extract_center()
         traite_centre = deepcopy(traite)
         traite_centre.extract_center()
         if vert_off:
-            origin_st,origin_end=int(vert_off),int(vert_off)
+            origin_st,origin_end=int(vert_off),int(vert_off)+rough_vert_step
         else:
             origin_st, origin_end = 0, 150
         if long_param:
-            st_long,end_long=float(long_param),float(long_param)
+            st_long,end_long=float(long_param),float(long_param)+rough_horiz_step
         else:
             st_long, end_long =1,1.1
         if hauteur_param:
-            st_haut,end_haut=float(hauteur_param),float(hauteur_param)
+            st_haut,end_haut=float(hauteur_param),float(hauteur_param)+rough_horiz_step
         else:
             st_haut, end_haut=1,1.1
         param = Point_matcher.find_all_params_rough(ecru_centre, traite_centre,origin_st,origin_end,st_long,end_long,
-                                                    st_haut,end_haut)[0]
-        print(param)
-
+                                                    st_haut,end_haut,rough_horiz_step,rough_vert_step)[0]
         if vert_off:
-            origin_st,origin_end=int(vert_off),int(vert_off)
+            origin_st,origin_end=int(vert_off),int(vert_off)+fine_vert_step
         else:
             origin_st, origin_end = param[0] - 5, param[0] + 5
         if long_param:
-            st_long,end_long=float(long_param),float(long_param)
+            st_long,end_long=float(long_param),float(long_param)+fine_horiz_step
         else:
             st_long, end_long =param[1] - 0.01, param[1] + 0.01
         if hauteur_param:
-            st_haut,end_haut=float(hauteur_param),float(hauteur_param)
+            st_haut,end_haut=float(hauteur_param),float(hauteur_param)+fine_horiz_step
         else:
             st_haut, end_haut=param[2] - 0.01, param[2] + 0.01
 
         param = Point_matcher.find_all_params_fine(ecru_centre, traite_centre,origin_st,origin_end,st_long,end_long,
-                                                   st_haut,end_haut,0.001)
+                                                   st_haut,end_haut,fine_horiz_step,fine_vert_step)
 
         return param
 
@@ -117,10 +119,8 @@ class Point_matcher():
         ecru_copy.extract_center()
         traite_copy.invert_fabric()
         best=Point_matcher.find_all_params_rough(ecru,traite_copy,step=0.02)[1]
-        print("invert",best)
         traite_copy.flip_fabric()
         best2=Point_matcher.find_all_params_rough(ecru,traite_copy,step=0.02)[1]
-        print("flip",best2)
         if best2>best:
             return "flip+invert"
         else:

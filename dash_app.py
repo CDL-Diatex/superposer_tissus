@@ -55,7 +55,7 @@ def dash_scatter(fig,ecru,traite,stats):
     return app
 
 def render_stat(stats):
-    defects = {1: "FOD", 2: "TRAME", 3: "CHAINE", 13: "FOD2", 15: "TI Noeud", 24: "FOD 2T", 26: "TI trame",
+    defects = {1:"FOD", 2:"TRAME", 3:"CHAINE", 4:"FOD1", 5:"FOD2", 6:"TRAME1", 7:"TRAME2", 8:"CHAINE1", 9:"CHAINE2", 13: "FOD2", 15: "TI Noeud", 24: "FOD 2T", 26: "TI trame",
                27: "TI T-Chaine", 28: "TI T-TRAME", 29: "TI chaine", 3000: "inconnu"}
     rates = stats.staying_rates()
     stats_list=[]
