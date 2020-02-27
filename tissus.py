@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from operator import itemgetter
 
 
 class Tissus:
@@ -12,14 +13,15 @@ class Tissus:
         if larg == 0:
             self.larg_tot = max(self.data[:, 1])
 
-    def parseCsv(self, path):
+    def parseCsv(self, path): #charge le csv en mémoire
         df = pd.read_csv(path, names=["roule", "id", "zero1", "termine", "long_tot", "larg_tot", "inconnu1", "zero2",
                                       "type_defaut", "inconnu3", "metrage", "position", "long_defaut", "larg_defaut",
                                       "inconnu2", "image", "image2", "zero3", "requal_3_cat", "requal_6_cat"])
         df1 = df[['metrage', 'position', "type_defaut", "requal_6_cat", "image", "roule"]]
-        return df1.to_numpy(), df
+        data=sorted(df1.values.tolist(), key=itemgetter(0)) #on range les défaut par ordre de métrage. Ca permet d'accélerer le calcul des corrélations
+        return np.array(data), df
 
-    def moveData(self, long, larg):
+    def moveData(self, long, larg): #déplace les défauts des paramètres donnés en entrée
         mid_l = self.long_tot / 2
         mid_h = self.larg_tot / 2
         for default in self.data:
@@ -57,7 +59,7 @@ class Tissus:
             defects.pop(0)
         self.data = np.array(kept)
 
-    def rotate(self, rotation):
+    def rotate(self, rotation): #retourne le tissus de la rotation donnée
         if rotation == "no":
             return
         elif rotation == "invert":
@@ -68,15 +70,15 @@ class Tissus:
             self.flip_fabric()
             self.invert_fabric()
 
-    def invert_fabric(self):
+    def invert_fabric(self): #retourne le tissus selon l'axe des x
         for defect in self.data:
             defect[0] = self.long_tot - defect[0]
 
-    def flip_fabric(self):
+    def flip_fabric(self): #retourne le tissus selon l'axe des y
         for defect in self.data:
             defect[1] = self.larg_tot - defect[1]
 
-    def cut_all_sides(self, margin):
+    def cut_all_sides(self, margin):#découpe tous les défaut compris dans la marge de tous les côtés
         cuted = []
         for defect in self.data:
             if not (defect[1] < margin or defect[1] > self.larg_tot - margin) and not (
@@ -86,7 +88,7 @@ class Tissus:
         self.data = np.array(cuted)
         self.larg_tot = max(self.data[:, 1])
 
-    def cut_hauteur(self, margin):
+    def cut_hauteur(self, margin):#découpe tous les défauts compris dans la marge du côté haut et bas
         cuted = []
         for defect in self.data:
             if not (defect[1] < margin or defect[1] > self.larg_tot - margin):
@@ -95,7 +97,7 @@ class Tissus:
         self.data = np.array(cuted)
         self.larg_tot = max(self.data[:, 1])
 
-    def cut_longueur(self, margin):
+    def cut_longueur(self, margin):#découpe tous les défauts compris dans la marge à gauche et à droite
         cuted = []
         for defect in self.data:
             if not(defect[0] < margin or defect[0] > self.long_tot - margin):
@@ -104,7 +106,7 @@ class Tissus:
         self.data = np.array(cuted)
         self.larg_tot = max(self.data[:, 1])
 
-    def extract_center(self):
+    def extract_center(self): #extrait tous les défaut au centre du tissus. On récupère ainsi environ 1/9 des défaut. Permet d'accélérer le calcul des corrélations
         center = []
         margin_long = 0.25 * self.long_tot
         margin_larg = 0.25 * self.larg_tot
@@ -114,11 +116,11 @@ class Tissus:
                 center.append(defect)
         self.data = np.array(center)
 
-    def move_origin(self, origin_delta):
+    def move_origin(self, origin_delta):#deplace tous les défaut verticalement
         for default in self.data:
             default[1] += origin_delta
 
-    def move_defects_for_broken_cam(self, start, length):
+    def move_defects_for_broken_cam(self, start, length):#deplace tous les défaut horizontalement. Utile si les caméras TDM était en panne à un certain moment et pendant une durée connue.
         for defect in self.data:
             if defect[0] > start:
                 defect[0] += length

@@ -8,28 +8,28 @@ from draw_graph import Graph
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-e','--ecru', help='chemin vers le csv de l ecru', required=False)
+parser.add_argument('-e','--ecru', help='chemin vers le csv de l\'ecru', required=False)
 parser.add_argument('-f','--fini', help='chemin vers le csv du produit fini', required=False)
-parser.add_argument('-vOff','--vertical-offset', help='déplace tous les défauts du tissus traité de la valeur indiquée verticalement. Si blanc,sera calculé automatiquement', required=False)
-parser.add_argument('-hOff','--horizontal-offset', help='déplace tous les défauts du tissus traité de la valeur indiquée horizontalement', required=False)
-parser.add_argument('-long','--long-param', help='facteur a appliquer dans la longueur.Si blanc,sera calculé automatiquement', required=False)
-parser.add_argument('-haut','--haut-param', help='facteur a appliquer dans la hauteur.Si blanc,sera calculé automatiquement', required=False)
-parser.add_argument('-r','--rotation', help='rotation du tissus traité.Si blanc,sera calculé automatiquement.Valeurs attendues :{no,flip,invert,flip+invert}', required=False)
-parser.add_argument('-che','--cut-hauteur-ecru', help='largeur a supprimer du tissus de part et d autre de l ecru dans la hauteur', required=False)
-parser.add_argument('-chf','--cut-hauteur-fini', help='épaisseur a supprimer du tissus de part et d autre du produit fini dans la hauteur', required=False)
-parser.add_argument('-cle','--cut-longueur-ecru', help='épaisseur a supprimer du tissus de part et d autre de l ecru dans la hauteur', required=False)
-parser.add_argument('-clf','--cut-longueur-fini', help='épaisseur a supprimer du tissus de part et d autre du produit fini dans la hauteur', required=False)
+parser.add_argument('-vOff','--vertical-offset', help='déplace verticalement tous les défauts du tissus traité de la valeur indiquée. Si laissé blanc,sera calculé automatiquement', required=False)
+parser.add_argument('-hOff','--horizontal-offset', help='déplace verticalement tous les défauts du tissus traité de la valeur indiquée.', required=False)
+parser.add_argument('-long','--long-param', help='facteur à appliquer dans la longueur.Si laissé blanc,sera calculé automatiquement', required=False)
+parser.add_argument('-haut','--haut-param', help='facteur à appliquer dans la hauteur.Si laissé blanc,sera calculé automatiquement', required=False)
+parser.add_argument('-r','--rotation', help='rotation du tissus traité.Si laissé blanc,sera calculé automatiquement.Valeur attendue parmi :{no,flip,invert,flip+invert}', required=False)
+parser.add_argument('-che','--cut-hauteur-ecru', help='largeur à supprimer du tissus de part et d\'autre de l\'ecru dans la hauteur', required=False)
+parser.add_argument('-chf','--cut-hauteur-fini', help='épaisseur à supprimer du tissus de part et d\'autre du produit fini dans la hauteur', required=False)
+parser.add_argument('-cle','--cut-longueur-ecru', help='épaisseur à supprimer du tissus de part et d\'autre de l\'ecru dans la hauteur', required=False)
+parser.add_argument('-clf','--cut-longueur-fini', help='épaisseur à supprimer du tissus de part et d\'autre du produit fini dans la hauteur', required=False)
 args = parser.parse_args()
 
 
-args.ecru = "Matching/22/output_step2_Chaine_22.csv"
-args.fini = "Matching/22/01 389901_74204-2457.csv"
+args.ecru = "Matching/27/03 389902-27.csv"
+args.fini = "Matching/27/03 389902_74582-2537.csv"
 # args.cut_hauteur_ecru=100
-args.horizontal_offset=0
-args.long_param=1.047999999999998
-args.haut_param=1.037999999999998
-args.vertical_offset=75
-args.rotation="invert"
+# args.horizontal_offset=11
+# args.long_param=1.05
+# args.haut_param=1.086
+# args.vertical_offset=72
+# args.rotation="invert"
 ecru_name = args.ecru
 traite_name = args.fini
 ecru=Tissus(ecru_name)

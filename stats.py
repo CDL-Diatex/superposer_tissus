@@ -17,7 +17,7 @@ class Stats:
                 self.defect_qualification_col = 3
             self.defect_categories = len(ecru.data[:, self.defect_qualification_col])
 
-    def total_amount_defect(self, category):
+    def total_amount_defect(self, category):#rend le nombre total de défaut du type demandé sur l'écru
         tot = 0
         for defect in self.ecru.data:
             if defect[self.defect_qualification_col] == category:
@@ -42,7 +42,7 @@ class Stats:
         return rates
 
     def qualif_comparison(
-            self):  # compares the qualif of the matching results. Ne marche que pour les défauts requalifiés
+            self):  # compares the qualif of the matching results. Ne marche que pour les défauts requalifiés. Non utilisé
         corresp = {1: [13, 24], 2: [26, 28, 15], 3: [29, 27, 15]}
         rates = {}
         for def_category in corresp.keys():
