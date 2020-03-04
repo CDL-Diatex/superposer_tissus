@@ -4,8 +4,9 @@ import plotly.graph_objects as go
 
 
 class Graph():
+
     @staticmethod
-    def draw(data1, data2=[], name="inconnu", rotation="inconnu"):
+    def draw(data1, data2=[], name="inconnu", rotation="inconnu",long_tot=1400,larg_tot=2000):
         defects = {1: "FOD", 2: "TRAME", 3: "CHAINE", 4: "FOD1", 5: "FOD2", 6: "TRAME1", 7: "TRAME2", 8: "CHAINE1",
                    9: "CHAINE2", 13: "FOD2", 15: "TI Noeud", 24: "FOD 2T", 26: "TI trame",
                    27: "TI T-Chaine", 28: "TI T-TRAME", 29: "TI chaine", 3000: "inconnu"}
@@ -59,16 +60,16 @@ class Graph():
                                          mode='markers',
                                          name=defects[key],
                                          marker={"size": 5, "color": "red"}))
-        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink')
-        fig.update_xaxes(nticks=20)
-        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='LightPink')
-        fig.update_yaxes(nticks=20)
-        fig.update_layout(
-            title=f"{name} rotation = {rotation} ",
-            font=dict(
-                family="Courier New, monospace",
-                size=18,
-                color="#7f7f7f"
-            ))
+        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightPink',nticks=20,range=[-50,long_tot+50])
+        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='LightPink',nticks=20,range=[-50,larg_tot+50])
+        if name!="inconnu" or rotation!="inconnu":
+            fig.update_layout(
+                title=f"{name} rotation = {rotation} ",
+                font=dict(
+                    family="Courier New, monospace",
+                    size=18,
+                    color="#7f7f7f"
+                ))
         scatter = fig.data[0]
+        # fig.show()
         return fig

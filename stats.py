@@ -5,8 +5,9 @@ import math
 class Stats:
 
     def __init__(self, ecru, traite):
-        self.match, self.no_match = Point_matcher.find_corresponding_defect_list(ecru, traite, 2)[0], \
-                                    Point_matcher.find_corresponding_defect_list(ecru, traite, 2)[1]
+        self.match, self.not_match_ecru = Point_matcher.find_corresponding_defect_list(ecru, traite )[0], \
+                                    Point_matcher.find_corresponding_defect_list(ecru, traite )[1]
+        self.not_match_traite = Point_matcher.find_corresponding_defect_list(traite, ecru)[1]
         self.ecru = ecru
         self.traite = traite
         if self.match.any():
@@ -17,9 +18,15 @@ class Stats:
                 self.defect_qualification_col = 3
             self.defect_categories = len(ecru.data[:, self.defect_qualification_col])
 
-    def total_amount_defect(self, category):#rend le nombre total de défaut du type demandé sur l'écru
+    def total_amount_defect_ecru(self, category):#rend le nombre total de défaut du type demandé sur l'écru
         tot = 0
         for defect in self.ecru.data:
+            if defect[self.defect_qualification_col] == category:
+                tot += 1
+        return tot
+    def total_amount_defect_traite(self, category):#rend le nombre total de défaut du type demandé sur l'écru
+        tot = 0
+        for defect in self.traite.data:
             if defect[self.defect_qualification_col] == category:
                 tot += 1
         return tot
@@ -33,11 +40,11 @@ class Stats:
             for defect_couple in self.match:  # pour chaque couple de défaut qui matchent
                 if defect_couple[0, self.defect_qualification_col] == def_category:  # on prend le type de défaut écru
                     rates[def_category][0] += 1
-            rates[def_category][1] = self.total_amount_defect(def_category)
-            if self.total_amount_defect(def_category) != 0:
+            rates[def_category][1] = self.total_amount_defect_ecru(def_category)
+            if rates[def_category][1] != 0:
                 rates[def_category][0] = rates[def_category][0] / rates[def_category][1]
             else:
-                print("no defect in category " + str(def_category))
+                print("ECRU stats : no defect in category " + str(def_category))
                 rates[def_category][0] = 0
         return rates
 
@@ -58,3 +65,21 @@ class Stats:
             else:
                 rates[def_category] = corresp_amount / tot
         return rates
+
+    def appearing_defects(self):
+        rates = {}
+        if not self.not_match_traite.any():  # si aucun défaut n'est resté
+            return rates
+        for def_category in set(self.traite.data[:, self.defect_qualification_col]):  # pour chaque catégorie de défaut
+            rates[def_category] = [0, 0]
+            for defect in self.not_match_traite:  # pour chaque défaut apparu
+                if defect[self.defect_qualification_col] == def_category:
+                    rates[def_category][0] += 1
+            rates[def_category][1] = self.total_amount_defect_traite(def_category)
+            if rates[def_category][1] != 0:
+                rates[def_category][0] = rates[def_category][0] / rates[def_category][1]
+            else:
+                print("Produit fini stats : no defect in category " + str(def_category))
+                rates[def_category][0] = 0
+        return rates
+

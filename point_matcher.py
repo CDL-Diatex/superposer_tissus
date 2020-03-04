@@ -16,7 +16,7 @@ class Point_matcher():
                 if np.abs((defect_e[0] - defect_t[0])) < 10 * tol and np.abs((defect_e[1] - defect_t[1])) < 10 * tol:
                     matching += 1
                     break
-        return matching / len(ecru_defect)
+        return matching
 
     @staticmethod
     def correlate2d_distance(ecru_defect, traite_defect,
@@ -150,14 +150,18 @@ class Point_matcher():
 
     @staticmethod
     def find_corresponding_defect_list(ecru, traite,
-                                       tol):  # Returns the closest treated fabric defect within tolerance for each ecru defect. Returns a list of all the ecru defect with no correspondance
+                                       ):  # Returns the closest treated fabric defect within tolerance for each ecru defect. Returns a list of all the ecru defect with no correspondance
         matching = []
         not_matching = []
         for defect_e in ecru.data:
             dist_min = np.inf
             closest = []
             for defect_t in traite.data:
-                if np.abs((defect_e[0] - defect_t[0])) < 5 * tol and np.abs((defect_e[1] - defect_t[1])) < 60 * tol:
+                if (defect_e[3] == 7 or defect_e[3]==6) and (defect_t[3] == 7 or defect_t[3]==6): #si on a des trames
+                    vert_margin = 150
+                else:
+                    vert_margin =50
+                if np.abs((defect_e[0] - defect_t[0])) < 10 and np.abs((defect_e[1] - defect_t[1])) < vert_margin :
                     dist = np.sqrt((defect_e[0] - defect_t[0]) ** 2 + (defect_e[1] - defect_t[1]) ** 2)
                     if dist < dist_min:
                         dist_min = dist

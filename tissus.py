@@ -19,10 +19,10 @@ class Tissus:
                                       "inconnu2", "image", "image2", "zero3", "requal_3_cat", "requal_6_cat"])
         df1 = df[['metrage', 'position', "type_defaut", "requal_6_cat", "image", "roule"]]
         data=sorted(df1.values.tolist(), key=itemgetter(0)) #on range les défaut par ordre de métrage. Ca permet d'accélerer le calcul des corrélations
+        data=[defect for defect in data if defect[0]>0 and defect[1]>0] #on supprime les point aberrants qui ont une corrdonnée négative
         return np.array(data), df
 
     def moveData(self, long, larg): #déplace les défauts des paramètres donnés en entrée
-        mid_l = self.long_tot / 2
         mid_h = self.larg_tot / 2
         for default in self.data:
             if long != 1:
@@ -44,8 +44,12 @@ class Tissus:
             tot = 1
             i=0
             while i<len(defects):
+                if defects[0][3] == 6.0 or defects[0][3] == 7.0: #si on a une trame
+                    vert_margin = 250
+                else:
+                    vert_margin=25
                 if np.abs((defects[0][0] - defects[i][0])) < 1 and np.abs(
-                        (defects[0][1] - defects[i][1])) < 25 and defects[0] != defects[i] and str(defects[0][3]) == str(defects[i][3]): #si les deux points sont proches et de meme catégorie. Le str permet de gérer le cas défaut non requalifié. La colonne 3 vaut alors nan et on ne s'interesse pas au type de défaut
+                        (defects[0][1] - defects[i][1])) < vert_margin and defects[0] != defects[i] and str(defects[0][3]) == str(defects[i][3]): #si les deux points sont proches et de meme catégorie. Le str permet de gérer le cas défaut non requalifié. La colonne 3 vaut alors nan et on ne s'interesse pas au type de défaut
                     avgx += defects[i][0]
                     avgy += defects[i][1]
                     tot += 1
