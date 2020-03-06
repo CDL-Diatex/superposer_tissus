@@ -83,7 +83,7 @@ class Point_matcher():
         ecru_centre.extract_center() #on extrait le centre du tissus pour accélérer le processus
         traite_centre = deepcopy(traite)
         traite_centre.extract_center()
-        if vert_off:
+        if vert_off or vert_off==0:
             origin_st,origin_end=int(vert_off),int(vert_off)+rough_vert_step
         else:
             origin_st, origin_end = 0, 150
@@ -97,7 +97,7 @@ class Point_matcher():
             st_haut, end_haut=1,1.1
         param = Point_matcher.find_all_params_rough(ecru_centre, traite_centre,origin_st,origin_end,st_long,end_long,
                                                     st_haut,end_haut,rough_horiz_step,rough_vert_step)[0] #on obtient les paramètres de manière approximative
-        if vert_off:
+        if vert_off or vert_off==0:
             origin_st,origin_end=int(vert_off),int(vert_off)+fine_vert_step
         else:
             origin_st, origin_end = param[0] - 5, param[0] + 5
